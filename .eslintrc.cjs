@@ -36,6 +36,7 @@ const config = {
       "warn",
       { allowConstantExport: true },
     ],
+    "react/prop-types": "off",
   },
 };
 
