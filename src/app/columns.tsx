@@ -1,13 +1,13 @@
-import { WebsiteInfo } from "@/db/websiteInfo";
-import { ColumnDef } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
+import { Website } from "../api/getWebsiteInfo";
+
+const columnHelper = createColumnHelper<Website>();
 
 export const columns = [
-  {
-    accessorKey: "name",
+  columnHelper.accessor("name", {
     header: "Name",
-  },
-  {
-    accessorKey: "url",
+  }),
+  columnHelper.accessor("url", {
     header: "URL",
-  },
-] as ColumnDef<WebsiteInfo>[];
+  }),
+];
