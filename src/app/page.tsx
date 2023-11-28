@@ -1,27 +1,16 @@
-import { getWebsiteInfo } from "@/api/getWebsiteInfo";
-import { useQuery } from "@tanstack/react-query";
-import { DataTable } from "./DataTable";
-import { columns } from "./columns";
+import { useWebsiteInfo } from "@/components/websites/query";
+import { DataTable } from "../components/websites/DataTable";
+import { columns } from "../components/websites/columns";
 
 const HomePage = () => {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["websiteInfo"],
-    queryFn: getWebsiteInfo,
-    select: (data) => {
-      return data.result.flatMap((info) => info.websites);
-    },
-  });
+  const { data, isPending, isError, fetchNextPage } = useWebsiteInfo();
 
   if (isError) {
     return <div>Error...</div>;
   }
 
-  if (isLoading) {
+  if (isPending) {
     return <div>Loading...</div>;
-  }
-
-  if (!data) {
-    return null;
   }
 
   console.log(data);
@@ -31,6 +20,12 @@ const HomePage = () => {
       <div className="container mx-auto py-10">
         <DataTable columns={columns} data={data} />
       </div>
+      <button
+        className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+        onClick={() => void fetchNextPage()}
+      >
+        Load more...
+      </button>
     </>
   );
 };

@@ -3,7 +3,6 @@
  * Do not make direct changes to the file.
  */
 
-
 export type paths = {
   "/api/website/{website_id}": {
     /**
@@ -144,22 +143,22 @@ export type components = {
     UpdateWebsitePayload: {
       /** @description Affiliations of the website */
       affiliation?: {
-          /**
-           * @description Campus name
-           * @example 交大相關
-           */
-          campus: string;
-          /**
-           * @description Department name
-           * @example 行政單位
-           */
-          department: string;
-          /**
-           * @description Office name
-           * @example 圖書館
-           */
-          office: string;
-        }[];
+        /**
+         * @description Campus name
+         * @example 交大相關
+         */
+        campus: string;
+        /**
+         * @description Department name
+         * @example 行政單位
+         */
+        department: string;
+        /**
+         * @description Office name
+         * @example 圖書館
+         */
+        office: string;
+      }[];
       /**
        * @description Website name
        * @example 交通大學圖書館
