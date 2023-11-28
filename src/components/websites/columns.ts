@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { Website } from "../api/getWebsiteInfo";
+import { Website } from "../../api/getWebsiteInfo";
 
 const columnHelper = createColumnHelper<Website>();
 
