@@ -15,10 +15,14 @@ export type GetWebsiteInfoInput = GetWebsiteInfoAPI["parameters"]["query"];
 
 export const getWebsiteInfo = async ({
   queryKey,
-}: QueryFunctionContext<ReturnType<typeof websiteInfoKeys.all>>) => {
+  pageParam: cursor,
+}: QueryFunctionContext<
+  ReturnType<typeof websiteInfoKeys.all>,
+  string | undefined
+>) => {
   const [query] = queryKey;
   const response = await apiClient.GET("/api/website/search", {
-    params: { query },
+    params: { query: { ...query, cursor } },
   });
 
   if (response.error) {

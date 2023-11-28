@@ -1,17 +1,26 @@
 import { GetWebsiteInfoInput, getWebsiteInfo } from "@/api/getWebsiteInfo";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-export const useWebsiteInfo = () => {
-  return useQuery({
-    queryKey: websiteInfoKeys.all({}),
+export const useWebsiteInfo = (options: GetWebsiteInfoInput = {}) => {
+  return useInfiniteQuery({
+    queryKey: websiteInfoKeys.all(options),
     queryFn: getWebsiteInfo,
+    initialPageParam: options.cursor,
+    getNextPageParam: (lastPage) =>
+      lastPage.pagination.next_cursor ?? undefined,
     select: (data) => {
-      return data.result.flatMap((info) => info.websites);
+      return data.pages.flatMap((page) =>
+        page.result.flatMap((r) => r.websites),
+      );
     },
   });
 };
 
 export const websiteInfoKeys = {
-  all: (query: GetWebsiteInfoInput) =>
-    [{ scope: "websiteInfo", ...query }] as const,
+  all: ({
+    q,
+    limit,
+  }: Omit<NonNullable<GetWebsiteInfoInput>, "cursor"> = {}) => {
+    return [{ scope: "websiteInfo", q, limit }] as const;
+  },
 };
