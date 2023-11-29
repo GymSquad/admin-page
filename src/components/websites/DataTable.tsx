@@ -32,7 +32,7 @@ export function DataTable<TValue>({ columns, data }: DataTableProps<TValue>) {
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow key={headerGroup.id} className="bg-gray-200">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id}>
@@ -53,7 +53,10 @@ export function DataTable<TValue>({ columns, data }: DataTableProps<TValue>) {
             table.getRowModel().rows.map((row) =>
               row.original.indexRowTitle ? (
                 <TableRow key={row.id}>
-                  <TableCell colSpan={columns.length}>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="font-semibold text-slate-700"
+                  >
                     {row.original.indexRowTitle}
                   </TableCell>
                 </TableRow>
@@ -61,6 +64,7 @@ export function DataTable<TValue>({ columns, data }: DataTableProps<TValue>) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="hover:bg-muted/50"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
