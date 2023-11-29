@@ -5,11 +5,12 @@ import { paths } from "./types";
 
 type GetWebsiteInfoAPI = paths["/api/website/search"]["get"];
 
-type SearchSuccessResponse =
+export type SearchSuccessResponse =
   GetWebsiteInfoAPI["responses"]["200"]["content"]["application/json"];
 
-export type Website =
-  SearchSuccessResponse["result"][number]["websites"][number];
+export type SearchResultEntry = SearchSuccessResponse["result"][number];
+
+export type Website = SearchResultEntry["websites"][number];
 
 export type GetWebsiteInfoInput = GetWebsiteInfoAPI["parameters"]["query"];
 
