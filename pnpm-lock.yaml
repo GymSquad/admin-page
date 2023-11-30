@@ -14,6 +14,9 @@ dependencies:
   '@tanstack/react-table':
     specifier: ^8.10.7
     version: 8.10.7(react-dom@18.2.0)(react@18.2.0)
+  '@tanstack/react-virtual':
+    specifier: 3.0.0-beta.68
+    version: 3.0.0-beta.68(react-dom@18.2.0)(react@18.2.0)
   class-variance-authority:
     specifier: ^0.7.0
     version: 0.7.0
@@ -702,9 +705,24 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
+  /@tanstack/react-virtual@3.0.0-beta.68(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-YEFNCf+N3ZlNou2r4qnh+GscMe24foYEjTL05RS0ZHvah2RoUDPGuhnuedTv0z66dO2vIq6+Bl4TXatht5T7GQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@tanstack/virtual-core': 3.0.0-beta.68
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
   /@tanstack/table-core@8.10.7:
     resolution: {integrity: sha512-KQk5OMg5OH6rmbHZxuNROvdI+hKDIUxANaHlV+dPlNN7ED3qYQ/WkpY2qlXww1SIdeMlkIhpN/2L00rof0fXFw==}
     engines: {node: '>=12'}
+    dev: false
+
+  /@tanstack/virtual-core@3.0.0-beta.68:
+    resolution: {integrity: sha512-CnvsEJWK7cugigckt13AeY80FMzH+OMdEP0j0bS3/zjs44NiRe49x8FZC6R9suRXGMVMXtUHet0zbTp/Ec9Wfg==}
     dev: false
 
   /@types/debug@4.1.12:
