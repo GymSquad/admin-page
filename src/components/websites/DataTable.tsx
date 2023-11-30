@@ -61,8 +61,6 @@ export function DataTable() {
     }
     const lastItem = virtualItems[virtualItems.length - 1];
 
-    console.log(lastItem.index, rows.length - 1);
-
     if (
       lastItem.index >= rows.length - 1 &&
       hasNextPage &&
