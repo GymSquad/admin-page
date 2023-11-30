@@ -13,16 +13,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { WebsiteTableRow } from "./columns";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps<TValue> {
+  columns: ColumnDef<WebsiteTableRow, TValue>[];
+  data: WebsiteTableRow[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function DataTable<TValue>({ columns, data }: DataTableProps<TValue>) {
   const table = useReactTable({
     data,
     columns,
@@ -34,7 +32,7 @@ export function DataTable<TData, TValue>({
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow key={headerGroup.id} className="bg-gray-100">
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id}>
@@ -50,25 +48,35 @@ export function DataTable<TData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
-        <TableHeader>
-          <TableRow>
-            <TableHead colSpan={2}>123</TableHead>
-          </TableRow>
-        </TableHeader>
         <TableBody>
           {table.getRowModel().rows.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            table.getRowModel().rows.map((row) =>
+              row.original.indexRowTitle ? (
+                <TableRow key={row.id}>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="font-semibold text-slate-700"
+                  >
+                    {row.original.indexRowTitle}
                   </TableCell>
-                ))}
-              </TableRow>
-            ))
+                </TableRow>
+              ) : (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className="hover:bg-muted/50"
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ),
+            )
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
