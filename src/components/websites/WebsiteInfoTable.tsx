@@ -45,8 +45,6 @@ export function WebsiteInfoTable() {
       (range: Range) => {
         const stickyIndexes = data?.indexRowIds ?? [];
 
-        console.log(stickyIndexes, activeStickyIndexRef.current);
-
         activeStickyIndexRef.current =
           [...stickyIndexes]
             .reverse()
@@ -84,12 +82,6 @@ export function WebsiteInfoTable() {
     rows.length,
     virtualItems,
   ]);
-
-  if (virtualItems.length !== 0) {
-    console.log(virtualItems[0].start);
-  }
-
-  console.log(virtualItems);
 
   return (
     <div className="flex h-full flex-col">
