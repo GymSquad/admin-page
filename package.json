@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "format": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
+    "format-check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit",
     "gen-api-types": "openapi-typescript https://raw.githubusercontent.com/GymSquad/archive-api/main/docs/openapi.yml --output ./src/api/types.ts --export-type"
