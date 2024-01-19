@@ -2,6 +2,8 @@ import { Website } from "@/api/getWebsiteInfo";
 import { createColumnHelper } from "@tanstack/react-table";
 import { ExternalLink } from "lucide-react";
 
+import { WebsiteActionMenu } from "./WebsiteActionMenu";
+
 export type WebsiteTableRow = Partial<Website> & { indexRowTitle?: string };
 
 const columnHelper = createColumnHelper<WebsiteTableRow>();
@@ -25,5 +27,12 @@ export const websiteColumns = [
         <ExternalLink size={16} className="ml-2 inline-block" />
       </a>
     ),
+  }),
+  columnHelper.accessor("action", {
+    header: "Action",
+    size: 300,
+    cell: () => {
+      return <WebsiteActionMenu />;
+    },
   }),
 ];

@@ -89,7 +89,7 @@ export function WebsiteInfoTable() {
         {table.getHeaderGroups().map((headerGroup) => (
           <div
             key={headerGroup.id}
-            className="grid h-12 grid-cols-[2fr_5fr] items-center border-b transition-colors data-[state=selected]:bg-muted"
+            className="grid h-12 grid-cols-[2fr_5fr_1fr] items-center border-b transition-colors data-[state=selected]:bg-muted"
           >
             {headerGroup.headers.map((header) => {
               return (
@@ -144,7 +144,7 @@ export function WebsiteInfoTable() {
                 <div
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="absolute left-0 top-0 grid h-14 w-full grid-cols-[2fr_5fr] items-center border-b border-gray-200  px-8 hover:bg-muted/50"
+                  className="absolute left-0 top-0 grid h-14 w-full grid-cols-[2fr_5fr_1fr] items-center border-b border-gray-200  px-8 hover:bg-muted/50"
                   style={{
                     transform: `translateY(${virtualRow.start}px)`,
                     height: `${virtualRow.size}px`,
