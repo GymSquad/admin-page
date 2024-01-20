@@ -28,11 +28,14 @@ export const websiteColumns = [
       </a>
     ),
   }),
-  columnHelper.accessor("action", {
+  columnHelper.accessor("id", {
     header: "Action",
     size: 300,
-    cell: () => {
-      return <WebsiteActionMenu />;
+    cell: (row) => {
+      const websiteId = row.getValue();
+
+      if (!websiteId) return null;
+      return <WebsiteActionMenu id={websiteId} />;
     },
   }),
 ];

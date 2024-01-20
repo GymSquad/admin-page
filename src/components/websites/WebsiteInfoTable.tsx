@@ -31,7 +31,6 @@ export function WebsiteInfoTable() {
     data: data?.tableRows ?? [],
     columns: websiteColumns,
     getCoreRowModel: getCoreRowModel(),
-    debugTable: true,
   });
 
   const rows = table.getRowModel().rows;
