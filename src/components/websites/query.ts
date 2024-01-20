@@ -18,7 +18,13 @@ export const useWebsiteInfo = (options: GetWebsiteInfoInput = {}) => {
 };
 
 const groupWebsiteInfo = (data: InfiniteData<SearchSuccessResponse>) => {
-  const all = data.pages.flatMap((page) => page.result);
+  const all = data.pages.flatMap((page) => {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (page.result == null) {
+      return [];
+    }
+    return page.result;
+  });
 
   let lastId = "",
     currentCount = 0;
