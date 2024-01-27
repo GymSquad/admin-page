@@ -4,6 +4,7 @@ import {
   getWebsiteInfo,
 } from "@/api/getWebsiteInfo";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
+import { WebsiteTableRow } from "./columns";
 
 export const useWebsiteInfo = (options: GetWebsiteInfoInput = {}) => {
   return useInfiniteQuery({
@@ -19,17 +20,30 @@ export const useWebsiteInfo = (options: GetWebsiteInfoInput = {}) => {
 const groupWebsiteInfo = (data: InfiniteData<SearchSuccessResponse>) => {
   const all = data.pages.flatMap((page) => page.result);
 
-  let lastId = "";
-  return all.flatMap((result) => {
+  let lastId = "",
+    currentCount = 0;
+  const indexRowIds: number[] = [];
+
+  const tableRows = all.flatMap((result) => {
     if (result.id === lastId) {
+      currentCount += result.websites.length;
       return result.websites;
     }
+
     lastId = result.id;
     const indexRow = {
       indexRowTitle: `${result.campus} > ${result.department} > ${result.office}`,
     };
+
+    indexRowIds.push(currentCount);
+    currentCount += result.websites.length;
     return [indexRow, ...result.websites];
-  });
+  }) as WebsiteTableRow[];
+
+  return {
+    tableRows,
+    indexRowIds,
+  };
 };
 
 export const websiteInfoKeys = {
