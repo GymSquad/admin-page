@@ -3,7 +3,6 @@
  * Do not make direct changes to the file.
  */
 
-
 export type paths = {
   "/": {
     /**
@@ -250,7 +249,6 @@ export type $defs = Record<string, never>;
 export type external = Record<string, never>;
 
 export type operations = {
-
   /**
    * Ping
    * @description Ping the API to check if it's alive.
