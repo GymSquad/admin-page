@@ -1,4 +1,5 @@
 import {
+  Table,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -10,8 +11,14 @@ import {
   defaultRangeExtractor,
   useVirtualizer,
 } from "@tanstack/react-virtual";
-import { useCallback, useEffect, useMemo, useRef } from "react";
-import { websiteColumns } from "./WebsiteInfoColumns";
+import {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
+import { WebsiteTableRow, websiteColumns } from "./WebsiteInfoColumns";
 import { useWebsiteInfo } from "./query";
 
 type WebsiteInfoTableProps = {
@@ -93,8 +100,101 @@ export function WebsiteInfoTable({ queryRes }: WebsiteInfoTableProps) {
     virtualItems,
   ]);
 
+  if (queryRes.isLoading) {
+    return (
+      <WebsiteInfoTableContainer table={table} scrollRef={scrollRef}>
+        <div className="flex h-full items-center justify-center">
+          <div className="text-center text-2xl">Loading...</div>
+        </div>
+      </WebsiteInfoTableContainer>
+    );
+  }
+
+  if (queryRes.isError) {
+    return (
+      <WebsiteInfoTableContainer table={table} scrollRef={scrollRef}>
+        <div className="flex h-full items-center justify-center">
+          <div className="text-center text-2xl">Error occurred.</div>
+        </div>
+      </WebsiteInfoTableContainer>
+    );
+  }
+
+  if (virtualItems.length === 0) {
+    return (
+      <WebsiteInfoTableContainer table={table} scrollRef={scrollRef}>
+        <div className="flex h-full items-center justify-center">
+          <div className="text-center text-2xl">No results.</div>
+        </div>
+      </WebsiteInfoTableContainer>
+    );
+  }
+
   return (
-    <div className="flex h-full flex-col">
+    <WebsiteInfoTableContainer table={table} scrollRef={scrollRef}>
+      <div
+        style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
+        className="relative"
+      >
+        {virtualItems.map((virtualRow) => {
+          const row = rows[virtualRow.index];
+
+          return row.original.indexRowTitle ? (
+            <div
+              key={row.id}
+              className={cn(
+                "left-0 top-0 flex h-14 w-full items-center px-8 font-semibold",
+                {
+                  "z-10 border-b border-gray-200 bg-muted": isSticky(
+                    virtualRow.index,
+                  ),
+                  sticky: isActiveSticky(virtualRow.index),
+                  absolute: !isActiveSticky(virtualRow.index),
+                },
+              )}
+              style={
+                isActiveSticky(virtualRow.index)
+                  ? {}
+                  : { transform: `translateY(${virtualRow.start}px)` }
+              }
+            >
+              <p>{row.original.indexRowTitle}</p>
+            </div>
+          ) : (
+            <div
+              key={row.id}
+              data-state={row.getIsSelected() && "selected"}
+              className="absolute left-0 top-0 grid h-14 w-full grid-cols-[2fr_5fr_1fr] items-center border-b border-gray-200  px-8 hover:bg-muted/50"
+              style={{
+                transform: `translateY(${virtualRow.start}px)`,
+                height: `${virtualRow.size}px`,
+              }}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <div key={cell.id} className="truncate">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    </WebsiteInfoTableContainer>
+  );
+}
+
+type WebsiteInfoTableContainerProps = PropsWithChildren<{
+  table: Table<WebsiteTableRow>;
+  scrollRef: React.RefObject<HTMLDivElement>;
+}>;
+
+const WebsiteInfoTableContainer = ({
+  children,
+  table,
+  scrollRef,
+}: WebsiteInfoTableContainerProps) => {
+  return (
+    <div className="flex h-full flex-col overflow-hidden">
       <div className="rounded-t-md bg-gray-100 px-8">
         {table.getHeaderGroups().map((headerGroup) => (
           <div
@@ -121,63 +221,8 @@ export function WebsiteInfoTable({ queryRes }: WebsiteInfoTableProps) {
         ref={scrollRef}
         className="relative h-full w-full overflow-auto rounded-b-md border"
       >
-        {virtualItems.length ? (
-          <div
-            style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
-            className="relative"
-          >
-            {virtualItems.map((virtualRow) => {
-              const row = rows[virtualRow.index];
-
-              return row.original.indexRowTitle ? (
-                <div
-                  key={row.id}
-                  className={cn(
-                    "left-0 top-0 flex h-14 w-full items-center px-8 font-semibold",
-                    {
-                      "z-10 border-b border-gray-200 bg-muted": isSticky(
-                        virtualRow.index,
-                      ),
-                      sticky: isActiveSticky(virtualRow.index),
-                      absolute: !isActiveSticky(virtualRow.index),
-                    },
-                  )}
-                  style={
-                    isActiveSticky(virtualRow.index)
-                      ? {}
-                      : { transform: `translateY(${virtualRow.start}px)` }
-                  }
-                >
-                  <p>{row.original.indexRowTitle}</p>
-                </div>
-              ) : (
-                <div
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="absolute left-0 top-0 grid h-14 w-full grid-cols-[2fr_5fr_1fr] items-center border-b border-gray-200  px-8 hover:bg-muted/50"
-                  style={{
-                    transform: `translateY(${virtualRow.start}px)`,
-                    height: `${virtualRow.size}px`,
-                  }}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <div key={cell.id} className="truncate">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </div>
-                  ))}
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <div className="text-center text-2xl">No results.</div>
-          </div>
-        )}
+        {children}
       </div>
     </div>
   );
-}
+};
