@@ -11,23 +11,20 @@ export const useWebsiteInfo = (options: GetWebsiteInfoInput = {}) => {
     queryKey: websiteInfoKeys.all(options),
     queryFn: getWebsiteInfo,
     initialPageParam: options.cursor,
-    getNextPageParam: (lastPage) =>
-      lastPage.pagination.next_cursor ?? undefined,
+    getNextPageParam: (lastPage) => {
+      return lastPage.pagination.next_cursor ?? undefined;
+    },
     select: groupWebsiteInfo,
   });
 };
 
 const groupWebsiteInfo = (data: InfiniteData<SearchSuccessResponse>) => {
   const all = data.pages.flatMap((page) => {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (page.result == null) {
-      return [];
-    }
     return page.result;
   });
 
-  let lastId = "",
-    currentCount = 0;
+  let lastId = "";
+  let currentCount = 0;
   const indexRowIds: number[] = [];
 
   const tableRows = all.flatMap((result) => {

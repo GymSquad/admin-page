@@ -19,16 +19,16 @@ export const getWebsiteInfo = async ({
   pageParam: cursor,
 }: QueryFunctionContext<
   ReturnType<typeof websiteInfoKeys.all>,
-  string | undefined
+  string | null | undefined
 >) => {
   const [query] = queryKey;
   const response = await apiClient.GET("/api/website/search", {
     params: { query: { ...query, cursor } },
   });
 
-  if (response.error) {
-    throw new Error(response.error.error);
+  if (response.data) {
+    return response.data;
   }
 
-  return response.data;
+  throw new Error("Fail to get website info");
 };
