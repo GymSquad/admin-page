@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { clsx, type ClassValue } from "clsx";
 import { useCallback, useRef } from "react";
 import { twMerge } from "tailwind-merge";
