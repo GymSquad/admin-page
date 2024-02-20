@@ -3,6 +3,7 @@
  * Do not make direct changes to the file.
  */
 
+
 export type paths = {
   "/": {
     /**
@@ -10,6 +11,10 @@ export type paths = {
      * @description Ping the API to check if it's alive.
      */
     get: operations["ping__get"];
+  };
+  "/api/website/{website_id}/details": {
+    /** Get Website Details */
+    get: operations["get_website_details_api_website__website_id__details_get"];
   };
   "/api/website/{website_id}": {
     /** Get Archived Dates */
@@ -20,6 +25,18 @@ export type paths = {
   "/api/website/search": {
     /** Search Websites */
     get: operations["search_websites_api_website_search_get"];
+  };
+  "/api/categories/id": {
+    /** Get All Categories Id */
+    get: operations["get_all_categories_id_api_categories_id_get"];
+  };
+  "/api/categories/{category_id}/departments": {
+    /** Get Departments By Category Id */
+    get: operations["get_departments_by_category_id_api_categories__category_id__departments_get"];
+  };
+  "/departments/{department_id}/offices": {
+    /** Get Offices By Department Id */
+    get: operations["get_offices_by_department_id_departments__department_id__offices_get"];
   };
 };
 
@@ -45,10 +62,93 @@ export type components = {
        */
       office: string;
     };
+    /** AffiliationId */
+    AffiliationId: {
+      /** Campus Id */
+      campus_id: string;
+      /** Department Id */
+      department_id: string;
+      /** Office Id */
+      office_id: string;
+    };
+    /**
+     * AllCategoriesIdResponse
+     * @example {
+     *   "ids": [
+     *     "clhjj1v7c0000gbgn8a5z182n",
+     *     "clhjj1v9k0002gbgnbfju6luj",
+     *     "clhjj1v9m0004gbgn0gsst205"
+     *   ]
+     * }
+     */
+    AllCategoriesIdResponse: {
+      /** Ids */
+      ids: string[];
+    };
+    /** DepartmentResponse */
+    DepartmentResponse: {
+      /** Id */
+      id: string;
+      /** Name */
+      name: string;
+    };
+    /**
+     * GetDepartmentsByCategoryIdResponse
+     * @example {
+     *   "departments": [
+     *     {
+     *       "id": "clhjj1vfa000jgbgn22c3lvyh",
+     *       "name": "學術單位"
+     *     },
+     *     {
+     *       "id": "clhjj1vfp000mgbgnrxv5wvpp",
+     *       "name": "行政單位"
+     *     },
+     *     {
+     *       "id": "clhjj1vg2000ngbgnz7hf002d",
+     *       "name": "研究單位"
+     *     },
+     *     {
+     *       "id": "clhjj1vgp000rgbgnxwkh39rg",
+     *       "name": "學生活動"
+     *     }
+     *   ]
+     * }
+     */
+    GetDepartmentsByCategoryIdResponse: {
+      /** Departments */
+      departments: components["schemas"]["DepartmentResponse"][];
+    };
+    /**
+     * GetOfficesByDepartmentIdResponse
+     * @example {
+     *   "offices": [
+     *     {
+     *       "id": "clhjj1voh000tgbgng77i1wp5",
+     *       "name": "教務處"
+     *     },
+     *     {
+     *       "id": "clhjj1voi000ugbgnqma6bphq",
+     *       "name": "校長室"
+     *     }
+     *   ]
+     * }
+     */
+    GetOfficesByDepartmentIdResponse: {
+      /** Offices */
+      offices: components["schemas"]["OfficeResponse"][];
+    };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
       detail?: components["schemas"]["ValidationError"][];
+    };
+    /** OfficeResponse */
+    OfficeResponse: {
+      /** Id */
+      id: string;
+      /** Name */
+      name: string;
     };
     /** Pagination */
     Pagination: {
@@ -236,6 +336,33 @@ export type components = {
       /** Error Type */
       type: string;
     };
+    /**
+     * WebsiteInfo
+     * @example {
+     *   "affiliationIds": [
+     *     {
+     *       "campus_id": "clhjj1v9k0002gbgnbfju6luj",
+     *       "department_id": "clhjj1vgl000pgbgnuso925sb",
+     *       "office_id": "clhjj1vqs0038gbgn9cq37eyc"
+     *     },
+     *     {
+     *       "campus_id": "clhjj1v9k0002gbgnbfju6luj",
+     *       "department_id": "clhjj1vgl000pgbgnuso925sb",
+     *       "office_id": "clhjj1vra0043gbgnh8wnz32k"
+     *     }
+     *   ],
+     *   "website_name": "圖書館",
+     *   "website_url": "https://lib.nycu.edu.tw/"
+     * }
+     */
+    WebsiteInfo: {
+      /** Website Name */
+      website_name: string;
+      /** Website Url */
+      website_url: string;
+      /** Affiliationids */
+      affiliationIds: components["schemas"]["AffiliationId"][];
+    };
   };
   responses: never;
   parameters: never;
@@ -249,6 +376,7 @@ export type $defs = Record<string, never>;
 export type external = Record<string, never>;
 
 export type operations = {
+
   /**
    * Ping
    * @description Ping the API to check if it's alive.
@@ -259,6 +387,28 @@ export type operations = {
       200: {
         content: {
           "application/json": components["schemas"]["PingResponse"];
+        };
+      };
+    };
+  };
+  /** Get Website Details */
+  get_website_details_api_website__website_id__details_get: {
+    parameters: {
+      path: {
+        website_id: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["WebsiteInfo"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
         };
       };
     };
@@ -333,6 +483,61 @@ export type operations = {
       400: {
         content: {
           "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get All Categories Id */
+  get_all_categories_id_api_categories_id_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AllCategoriesIdResponse"];
+        };
+      };
+    };
+  };
+  /** Get Departments By Category Id */
+  get_departments_by_category_id_api_categories__category_id__departments_get: {
+    parameters: {
+      path: {
+        category_id: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["GetDepartmentsByCategoryIdResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  /** Get Offices By Department Id */
+  get_offices_by_department_id_departments__department_id__offices_get: {
+    parameters: {
+      path: {
+        department_id: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["GetOfficesByDepartmentIdResponse"];
         };
       };
       /** @description Validation Error */
