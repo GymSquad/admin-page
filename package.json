@@ -11,7 +11,7 @@
     "format-check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit",
-    "gen-api-types": "openapi-typescript https://raw.githubusercontent.com/GymSquad/archive-api/main/docs/openapi.yml --output ./src/api/types.ts --export-type"
+    "gen-api-types": "openapi-typescript https://raw.githubusercontent.com/GymSquad/archive-api/main/openapi.json --output ./src/api/types.ts --export-type"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
