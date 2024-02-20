@@ -10,16 +10,19 @@ import {
   defaultRangeExtractor,
   useVirtualizer,
 } from "@tanstack/react-virtual";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { websiteColumns } from "./WebsiteInfoColumns";
 import { useWebsiteInfo } from "./query";
 
-export function WebsiteInfoTable() {
+type WebsiteInfoTableProps = {
+  queryRes: ReturnType<typeof useWebsiteInfo>;
+};
+
+export function WebsiteInfoTable({ queryRes }: WebsiteInfoTableProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const activeStickyIndexRef = useRef(0);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useWebsiteInfo();
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = queryRes;
 
   const isSticky = (index: number) => data?.indexRowIds.includes(index);
 
@@ -27,8 +30,16 @@ export function WebsiteInfoTable() {
     return activeStickyIndexRef.current === index;
   };
 
+  const tableRows = useMemo(() => {
+    if (!data) {
+      return [];
+    }
+
+    return data.tableRows;
+  }, [data]);
+
   const table = useReactTable({
-    data: data?.tableRows ?? [],
+    data: tableRows,
     columns: websiteColumns,
     getCoreRowModel: getCoreRowModel(),
   });
@@ -110,12 +121,12 @@ export function WebsiteInfoTable() {
         ref={scrollRef}
         className="relative h-full w-full overflow-auto rounded-b-md border"
       >
-        <div
-          style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
-          className="relative"
-        >
-          {virtualItems.length ? (
-            virtualItems.map((virtualRow) => {
+        {virtualItems.length ? (
+          <div
+            style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
+            className="relative"
+          >
+            {virtualItems.map((virtualRow) => {
               const row = rows[virtualRow.index];
 
               return row.original.indexRowTitle ? (
@@ -159,13 +170,13 @@ export function WebsiteInfoTable() {
                   ))}
                 </div>
               );
-            })
-          ) : (
-            <div>
-              <div className="h-24 text-center">No results.</div>
-            </div>
-          )}
-        </div>
+            })}
+          </div>
+        ) : (
+          <div className="flex h-full items-center justify-center">
+            <div className="text-center text-2xl">No results.</div>
+          </div>
+        )}
       </div>
     </div>
   );

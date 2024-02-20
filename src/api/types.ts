@@ -3,104 +3,47 @@
  * Do not make direct changes to the file.
  */
 
+
 export type paths = {
   "/api/website/{website_id}": {
     /**
-     * Get archived dates
-     * @description Get the archived dates of a website
+     * Get Archived Dates
+     * @description Get archived dates of a website
      */
-    get: {
-      parameters: {
-        path: {
-          /** @description Website ID */
-          website_id: string;
-        };
-      };
-      responses: {
-        /** @description Successful response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["ArchivedDates"];
-          };
-        };
-        /** @description Website not found */
-        404: {
-          content: {
-            "application/json": string;
-          };
-        };
-      };
-    };
+    get: operations["get_archived_dates_api_website__website_id__get"];
     /**
-     * Update website
+     * Update Website
      * @description Update the information of a website
      */
-    patch: {
-      parameters: {
-        path: {
-          /** @description Website ID */
-          website_id: string;
-        };
-      };
-      /** @description Website information to be updated */
-      requestBody: {
-        content: {
-          "application/json": components["schemas"]["UpdateWebsitePayload"];
-        };
-      };
-      responses: {
-        /** @description Successful response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["Website"];
-          };
-        };
-      };
-    };
+    patch: operations["update_website_api_website__website_id__patch"];
   };
   "/api/website/search": {
     /**
-     * Search websites
+     * Search Websites
      * @description Search websites
      */
-    get: {
-      parameters: {
-        query?: {
-          /** @description Search query */
-          q?: string;
-          /** @description Cursor for pagination */
-          cursor?: string;
-          /** @description Limit for pagination */
-          limit?: number;
-        };
-      };
-      responses: {
-        /** @description Successful response */
-        200: {
-          content: {
-            "application/json": components["schemas"]["WebsiteSearchResult"];
-          };
-        };
-        /** @description Invalid cursor or limit */
-        400: {
-          content: {
-            "application/json": {
-              /** @example Invalid cursor */
-              error?: string;
-            };
-          };
-        };
-        /** @description Internal server error */
-        500: {
-          content: {
-            "application/json": {
-              /** @example Internal server error */
-              error?: string;
-            };
-          };
-        };
-      };
-    };
+    get: operations["search_websites_api_website_search_get"];
+  };
+  "/api/campus": {
+    /**
+     * Get All Campuses
+     * @description Get all campuses
+     */
+    get: operations["get_all_campuses_api_campus_get"];
+  };
+  "/api/campus/{campus_id}/department": {
+    /**
+     * Get All Departments
+     * @description Get all departments of a campus
+     */
+    get: operations["get_all_departments_api_campus__campus_id__department_get"];
+  };
+  "/api/department/{department_id}/office": {
+    /**
+     * Get All Offices
+     * @description Get all offices of a department
+     */
+    get: operations["get_all_offices_api_department__department_id__office_get"];
   };
 };
 
@@ -108,101 +51,108 @@ export type webhooks = Record<string, never>;
 
 export type components = {
   schemas: {
-    ArchivedDates: string[];
+    /** Affiliation */
     Affiliation: {
-      /**
-       * @description Campus name
-       * @example 交大相關
-       */
-      campus: string;
-      /**
-       * @description Department name
-       * @example 行政單位
-       */
-      department: string;
-      /**
-       * @description Office name
-       * @example 圖書館
-       */
-      office: string;
+      /** Campus Id */
+      campus_id: string;
+      /** Campus Name */
+      campus_name: string;
+      /** Department Id */
+      department_id: string;
+      /** Department Name */
+      department_name: string;
+      /** Office Id */
+      office_id: string;
+      /** Office Name */
+      office_name: string;
     };
-    Website: components["schemas"]["Affiliation"] & {
-      /** @description Website ID */
+    /** Campus */
+    Campus: {
+      /** Id */
       id: string;
-      /**
-       * @description Website name
-       * @example 交通大學圖書館
-       */
+      /** Name */
       name: string;
-      /**
-       * @description Website URL
-       * @example http://www.lib.nctu.edu.tw/
-       */
-      url: string;
     };
-    UpdateWebsitePayload: {
-      /** @description Affiliations of the website */
-      affiliation?: {
-        /**
-         * @description Campus name
-         * @example 交大相關
-         */
-        campus: string;
-        /**
-         * @description Department name
-         * @example 行政單位
-         */
-        department: string;
-        /**
-         * @description Office name
-         * @example 圖書館
-         */
-        office: string;
-      }[];
-      /**
-       * @description Website name
-       * @example 交通大學圖書館
-       */
-      name?: string;
-      /**
-       * @description Website URL
-       * @example http://www.lib.nctu.edu.tw/
-       */
-      url?: string;
+    /** Department */
+    Department: {
+      /** Id */
+      id: string;
+      /** Name */
+      name: string;
     };
-    WebsiteSearchResult: {
+    /** InvalidPayload */
+    InvalidPayload: {
+      /** Error */
+      error: string;
+    };
+    /** Office */
+    Office: {
+      /** Id */
+      id: string;
+      /** Name */
+      name: string;
+    };
+    /** Pagination */
+    Pagination: {
+      /** Next Cursor */
+      next_cursor?: string;
+      /** Num Results */
+      num_results: number;
+      /** Total Results */
+      total_results: number;
+    };
+    /** SearchResult */
+    SearchResult: {
+      /** Result */
       result: components["schemas"]["SearchResultEntry"][];
       pagination: components["schemas"]["Pagination"];
     };
-    SearchResultEntry: components["schemas"]["Affiliation"] & {
-      /**
-       * @description Composite ID made of campus, department, and office
-       * @example campus-id$department-id$office-id
-       */
+    /** SearchResultEntry */
+    SearchResultEntry: {
+      /** Id */
       id: string;
-      websites: components["schemas"]["SearchResultWebsiteEntry"][];
+      /** Campus */
+      campus: string;
+      /** Department */
+      department: string;
+      /** Office */
+      office: string;
+      /** Websites */
+      websites: components["schemas"]["Website"][];
     };
-    SearchResultWebsiteEntry: {
-      /** @description Website ID */
+    /** UpdateWebsitePayload */
+    UpdateWebsitePayload: {
+      /** Name */
+      name?: string;
+      /** Url */
+      url?: string;
+      /** Office Ids */
+      office_ids?: string[];
+    };
+    /** UpdatedWebsite */
+    UpdatedWebsite: {
+      /** Id */
       id: string;
-      /**
-       * @description Website name
-       * @example 交通大學圖書館
-       */
+      /** Name */
       name: string;
-      /**
-       * @description Website URL
-       * @example http://www.lib.nctu.edu.tw/
-       */
+      /** Url */
+      url: string;
+      /** Affiliations */
+      affiliations: components["schemas"]["Affiliation"][];
+    };
+    /** Website */
+    Website: {
+      /** Id */
+      id: string;
+      /** Name */
+      name: string;
+      /** Url */
       url: string;
     };
-    Pagination: {
-      /** @description Cursor for next page */
-      next_cursor: string | null;
-      /** @description Number of websites returned in this page */
-      num_results: number;
-      /** @description Total number of websites */
-      total_results: number;
+    /** WebsiteNotFound */
+    WebsiteNotFound: {
+      /** Error */
+      error: string;
     };
   };
   responses: never;
@@ -216,4 +166,143 @@ export type $defs = Record<string, never>;
 
 export type external = Record<string, never>;
 
-export type operations = Record<string, never>;
+export type operations = {
+
+  /**
+   * Get Archived Dates
+   * @description Get archived dates of a website
+   */
+  get_archived_dates_api_website__website_id__get: {
+    parameters: {
+      path: {
+        website_id: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": string[];
+        };
+      };
+      /** @description Website not found */
+      404: {
+        content: {
+          "application/json": string;
+        };
+      };
+    };
+  };
+  /**
+   * Update Website
+   * @description Update the information of a website
+   */
+  update_website_api_website__website_id__patch: {
+    parameters: {
+      path: {
+        website_id: string;
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UpdateWebsitePayload"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["UpdatedWebsite"];
+        };
+      };
+      /** @description Website not found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["WebsiteNotFound"];
+        };
+      };
+    };
+  };
+  /**
+   * Search Websites
+   * @description Search websites
+   */
+  search_websites_api_website_search_get: {
+    parameters: {
+      query?: {
+        /** @description Search query */
+        q?: string;
+        /** @description Cursor for pagination */
+        cursor?: string;
+        /** @description Limit for pagination */
+        limit?: number;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["SearchResult"];
+        };
+      };
+      /** @description Invalid payload */
+      400: {
+        content: {
+          "application/json": components["schemas"]["InvalidPayload"];
+        };
+      };
+    };
+  };
+  /**
+   * Get All Campuses
+   * @description Get all campuses
+   */
+  get_all_campuses_api_campus_get: {
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Campus"][];
+        };
+      };
+    };
+  };
+  /**
+   * Get All Departments
+   * @description Get all departments of a campus
+   */
+  get_all_departments_api_campus__campus_id__department_get: {
+    parameters: {
+      path: {
+        campus_id: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Department"][];
+        };
+      };
+    };
+  };
+  /**
+   * Get All Offices
+   * @description Get all offices of a department
+   */
+  get_all_offices_api_department__department_id__office_get: {
+    parameters: {
+      path: {
+        department_id: string;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Office"][];
+        };
+      };
+    };
+  };
+};
