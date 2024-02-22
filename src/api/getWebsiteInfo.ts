@@ -18,7 +18,7 @@ export const getWebsiteInfo = async ({
   queryKey,
   pageParam: cursor,
 }: QueryFunctionContext<
-  ReturnType<typeof websiteInfoKeys.all>,
+  ReturnType<typeof websiteInfoKeys.infos>,
   string | null | undefined
 >) => {
   const [query] = queryKey;

@@ -19,8 +19,10 @@ import {
 } from "../ui/dropdown-menu";
 import { Input } from "../ui/input";
 
+import { GetWebsiteDetailAPI } from "@/api/getWebsiteDetail";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import { useWebsiteDetail } from "./query";
 
 const updateWebsiteSchema = z.object({
   name: z.string().min(1),
@@ -54,7 +56,7 @@ export const WebsiteActionMenu = ({ id }: WebsiteActionMenuProps) => {
         </DropdownMenuContent>
       </DropdownMenu>
       {isEditDialogOpen && (
-        <EditWebsiteDialog id={id} setDialogOpen={setIsEditDialogOpen} />
+        <EditWebsiteDialog id={id} onOpenChange={setIsEditDialogOpen} />
       )}
     </>
   );
@@ -62,17 +64,41 @@ export const WebsiteActionMenu = ({ id }: WebsiteActionMenuProps) => {
 
 type EditWebsiteDialogProps = {
   id: string;
-  setDialogOpen: (isOpen: boolean) => void;
+  onOpenChange: (isOpen: boolean) => void;
 };
 
-const EditWebsiteDialog = ({ id, setDialogOpen }: EditWebsiteDialogProps) => {
-  console.log(id);
+const EditWebsiteDialog = ({ id, onOpenChange }: EditWebsiteDialogProps) => {
+  const { data: webDetail, isFetching, isError } = useWebsiteDetail({ id });
+
+  return (
+    <Dialog open={true} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Edit Website Information</DialogTitle>
+          <DialogDescription>
+            {"Make changes to website here. Click save when you're done."}
+          </DialogDescription>
+        </DialogHeader>
+        {isFetching && <div>Loading...</div>}
+        {isError && <div>Failed to load website detail</div>}
+        {webDetail && <EditForm webDetail={webDetail} />}
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+type EditFormProps = {
+  webDetail: GetWebsiteDetailAPI["responses"]["200"]["content"]["application/json"];
+};
+
+const EditForm = ({ webDetail }: EditFormProps) => {
+  const { website_url, website_name } = webDetail;
 
   const editForm = useForm<UpdateWebsiteFormValues>({
     resolver: zodResolver(updateWebsiteSchema),
     defaultValues: {
-      name: "Google",
-      url: "https://google.com",
+      name: website_name,
+      url: website_url,
     },
   });
 
@@ -81,53 +107,43 @@ const EditWebsiteDialog = ({ id, setDialogOpen }: EditWebsiteDialogProps) => {
   };
 
   return (
-    <Dialog open={true} onOpenChange={setDialogOpen}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Edit Website Information</DialogTitle>
-          <DialogDescription>
-            {"Make changes to website here. Click save when you're done."}
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...editForm}>
-          <form
-            onSubmit={(e) => void editForm.handleSubmit(onSubmit)(e)}
-            className="flex flex-col gap-4"
-          >
-            <FormField
-              control={editForm.control}
-              name="name"
-              render={({ field }) => {
-                return (
-                  <FormItem>
-                    <FormLabel htmlFor="name">Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                );
-              }}
-            />
-            <FormField
-              control={editForm.control}
-              name="url"
-              render={({ field }) => {
-                return (
-                  <FormItem>
-                    <FormLabel htmlFor="url">Url</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                  </FormItem>
-                );
-              }}
-            />
-            <DialogFooter>
-              <Button type="submit">Save changes</Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+    <Form {...editForm}>
+      <form
+        onSubmit={(e) => void editForm.handleSubmit(onSubmit)(e)}
+        className="flex flex-col gap-4"
+      >
+        <FormField
+          control={editForm.control}
+          name="name"
+          render={({ field }) => {
+            return (
+              <FormItem>
+                <FormLabel htmlFor="name">Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            );
+          }}
+        />
+        <FormField
+          control={editForm.control}
+          name="url"
+          render={({ field }) => {
+            return (
+              <FormItem>
+                <FormLabel htmlFor="url">Url</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+              </FormItem>
+            );
+          }}
+        />
+        <DialogFooter>
+          <Button type="submit">Save changes</Button>
+        </DialogFooter>
+      </form>
+    </Form>
   );
 };

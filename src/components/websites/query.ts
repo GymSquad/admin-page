@@ -1,14 +1,20 @@
+import { getWebsiteDetail } from "@/api/getWebsiteDetail";
 import {
   GetWebsiteInfoInput,
   SearchSuccessResponse,
   getWebsiteInfo,
 } from "@/api/getWebsiteInfo";
-import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
+import { UseQueryOptions } from "@/lib/types";
+import {
+  InfiniteData,
+  useInfiniteQuery,
+  useQuery,
+} from "@tanstack/react-query";
 import { WebsiteTableRow } from "./WebsiteInfoColumns";
 
 export const useWebsiteInfo = (options: GetWebsiteInfoInput = {}) => {
   return useInfiniteQuery({
-    queryKey: websiteInfoKeys.all(options),
+    queryKey: websiteInfoKeys.infos(options),
     queryFn: getWebsiteInfo,
     initialPageParam: options.cursor,
     getNextPageParam: (lastPage) => {
@@ -50,10 +56,35 @@ const groupWebsiteInfo = (data: InfiniteData<SearchSuccessResponse>) => {
 };
 
 export const websiteInfoKeys = {
-  all: ({
+  all: [{ scope: "websiteInfo" }] as const,
+  infos: ({
     q,
     limit,
   }: Omit<NonNullable<GetWebsiteInfoInput>, "cursor"> = {}) => {
-    return [{ scope: "websiteInfo", q, limit }] as const;
+    return [{ ...websiteInfoKeys.all[0], entity: "infos", q, limit }] as const;
   },
+  details: () => [{ ...websiteInfoKeys.all[0], entity: "details" }] as const,
+  detail: (id: string) => [{ ...websiteInfoKeys.details()[0], id }] as const,
+};
+
+type UseWebsiteDetailInput = { id: string };
+
+type UseWebsiteDetailOptions<TData> = UseQueryOptions<
+  Awaited<ReturnType<typeof getWebsiteDetail>>,
+  Error,
+  TData,
+  ReturnType<typeof websiteInfoKeys.detail>
+>;
+
+export const useWebsiteDetail = <
+  TData = Awaited<ReturnType<typeof getWebsiteDetail>>,
+>(
+  { id }: UseWebsiteDetailInput,
+  options?: UseWebsiteDetailOptions<TData>,
+) => {
+  return useQuery({
+    queryKey: websiteInfoKeys.detail(id),
+    queryFn: getWebsiteDetail,
+    ...options,
+  });
 };
