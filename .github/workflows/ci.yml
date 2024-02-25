@@ -12,7 +12,11 @@ jobs:
     name: Code quality checking
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/setup-deps
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+          
+      - name: Setup Project Dependencies
+        uses: ./.github/actions/setup-deps
         with:
           node-version: 18
           pnpm-version: 8
@@ -24,7 +28,11 @@ jobs:
     name: Type checking
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/setup-deps
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+          
+      - name: Setup Project Dependencies
+        uses: ./.github/actions/setup-deps
         with:
           node-version: 18
           pnpm-version: 8
@@ -37,7 +45,11 @@ jobs:
     needs: [code-quality-check, type-check]
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/setup-deps
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+          
+      - name: Setup Project Dependencies
+        uses: ./.github/actions/setup-deps
         with:
           node-version: 18
           pnpm-version: 8
