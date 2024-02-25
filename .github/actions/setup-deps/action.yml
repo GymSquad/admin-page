@@ -1,0 +1,34 @@
+name: "Setup Project Dependencies"
+description: "Setup dependencies for a pnpm-managed Node.js project"
+
+inputs:
+  node-version:
+    description: "Node.js version to use"
+    required: true
+    default: "18.x"
+  pnpm-version:
+    description: "pnpm version to use"
+    required: true
+    default: "8.x"
+  
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+        
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: ${{ inputs.pnpm-version }}
+          
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: "pnpm"
+          
+    - name: Install Project Dependencies
+      run: pnpm install --frozen-lockfile
+      shell: bash
+  
